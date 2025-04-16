@@ -6,11 +6,14 @@ users: list = [
 print(users)
 
 
-def remove_user(user_data:list[dict]) -> None:
-    user_name=input("Podaj imię znajomego do usunięcia: ")
-    for user in users:
+def update_user(users_data: list[dict]) -> None:
+    user_name=input("Podaj imię znajomego do aktualizacji: ")
+    for user in users_data:
         if user["name"] == user_name:
-            users.remove(user)
+            user["name"]=input("Podaj nowe imię znajomego: ")
+            user["location"]=input("Podaj nową miejscowość: ")
+            user["posts"]=int(input("Podaj nową ilość postów: "))
 
-remove_user(users)
+
+update_user(users)
 print(users)
