@@ -1,19 +1,42 @@
+import requests
+from bs4 import BeautifulSoup
+import folium
+
 users: list = [
-    {"name": "Filip", "location": "Ciechanów", "posts": 100},
-    {"name": "Kamil", "location": "Kraków", "posts": 83},
+    {"name": "Filip", "location": "Ciechanów", "posts": 100,
+     'picture': 'https://www.wig.wat.edu.pl/images/aktualnosci/2025/sklad_kpn_700.jpg'},
+    {"name": "Mateusz", "location": "Węgorzewo", "posts": 94,
+     'picture': 'https://www.wig.wat.edu.pl/images/aktualnosci/2025/sklad_kpn_700.jpg'},
+    {"name": "Łukasz", "location": "Wrocław", "posts": 765,
+     'picture': 'https://www.wig.wat.edu.pl/images/aktualnosci/2025/sklad_kpn_700.jpg'},
+    {"name": "Kamil", "location": "Skierniewice", "posts": 93,
+     'picture': 'https://www.wig.wat.edu.pl/images/aktualnosci/2025/sklad_kpn_700.jpg'},
+    {"name": "Bartosz", "location": "Stalowa Wola", "posts": 50,
+     'picture': 'https://www.wig.wat.edu.pl/images/aktualnosci/2025/sklad_kpn_700.jpg'},
 ]
 
-print(users)
+
+def get_coordinates(city_name: str) -> list:
+    address_url: str = f"https://pl.wikipedia.org/wiki/{city_name}"
+    response = requests.get(address_url).text
+    response_html = BeautifulSoup(response, "html.parser")
+    longitude: float = float(response_html.select(".longitude")[1].text.replace(",", "."))
+    # print(longitude)
+    latitude: float = float(response_html.select(".latitude")[1].text.replace(",", "."))
+    # print(latitude)
+    return [latitude, longitude]
 
 
-def update_user(users_data: list[dict]) -> None:
-    user_name=input("Podaj imię znajomego do aktualizacji: ")
+def get_map(users_data: list) -> None:
+    mapa = folium.Map([52.3, 21.00], zoom_start=6)
     for user in users_data:
-        if user["name"] == user_name:
-            user["name"]=input("Podaj nowe imię znajomego: ")
-            user["location"]=input("Podaj nową miejscowość: ")
-            user["posts"]=int(input("Podaj nową ilość postów: "))
+        folium.Marker(
+            location=get_coordinates(city_name=user["location"]),
+            popup=f'{user["name"]} <br/> {user["location"]} <br/> {user["posts"]}<br/>'
+                  f'<img src="{user["picture"]}" alt="{user["picture"]}"/>'
+        ).add_to(mapa)
+
+    mapa.save("mapa.html")
 
 
-update_user(users)
-print(users)
+get_map(users)
