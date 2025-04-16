@@ -1,13 +1,25 @@
-users:list=[
-    {"name":"Filip","location":"Ciechanów","posts": 100},
-    {"name":"Kamil","location":"SKierniewice","posts": 6},
-    {"name":"Łukasz","location":"Wrocław","posts": 110},
-    {"name":"Bartosz","location":"Stalowa Wola","posts": 300},
-
-]
+from utils.model import users
+from utils.controller import get_user_info, add_user, remove_user, update_user
 
 
-print(f"Witaj {users[0]["name"]}")
+def main():
+    print(f"Witaj {users[0]["name"]}")
 
-for user in users:
-    print(f"Twój znajomy {user["name"]} z {user["location"]} opublikował {user["posts"]} postów.")
+    while True:
+        print("=========MENU===========")
+        print("0 - Zakończ pracę programu")
+        print("1 - Pokaż co u moich znajomych")
+        print("2 - Dodaj znjomego")
+        print("3 - Usuń znajomego")
+        print("4 - Aktualizuj dane znajomego")
+        print("========================")
+        choice: str = input("Wybierz opcję menu: ")
+        if choice == "0": break
+        if choice == "1": get_user_info(users[1:])
+        if choice == "2": add_user(users)
+        if choice == "3": remove_user(users)
+        if choice == "4": update_user(users)
+
+
+if __name__ == "__main__":
+    main()
