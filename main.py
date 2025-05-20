@@ -10,10 +10,8 @@ class User:
         self.surname = surname
         self.location = location
         self.post = post
-        try:
-            self.coordinates = self.get_coordinates()
-        except:
-            self.coordinates = [0, 0]  # Domyślne współrzędne w przypadku błędu
+        self.coordinates = self.get_coordinates()
+        self.marker = map_widget.set_marker(self.coordinates[0], self.coordinates[1])
 
     def get_coordinates(self) -> list:
         try:
@@ -26,15 +24,14 @@ class User:
             latitude: float = float(response_html.select(".latitude")[1].text.replace(",", "."))
             return [latitude, longitude]
         except:
-            return [0, 0]  # Domyślne współrzędne w przypadku błędu
+            return [0, 0]
 
 def add_user():
     imie = entry_name.get()
     nazwisko = entry_surname.get()
     posty = entry_post.get()
     miejscowosc = entry_location.get()
-    
-    # Tworzenie nowego obiektu User zamiast słownika
+
     new_user = User(name=imie, surname=nazwisko, location=miejscowosc, post=posty)
     users.append(new_user)
     
@@ -67,6 +64,8 @@ def user_details():
         label_surname_szczegoly_obiektu_wartosc.configure(text=users[idx].surname)
         label_posts_szczegoly_obiektu_wartosc.configure(text=users[idx].post)
         label_location_szczegoly_obiektu_wartosc.configure(text=users[idx].location)
+        map_widget.set_position(users[idx].coordinates[0], users[idx].coordinates[1])
+        map_widget.set_zoom(17)
     except IndexError:
         pass
 
@@ -91,10 +90,13 @@ def update_users(idx):
     surname = entry_surname.get()
     location = entry_location.get()
     post = entry_post.get()
+
     users[idx].name = name
     users[idx].surname = surname
     users[idx].location = location
     users[idx].post = post
+    users[idx].coordinates = users[idx].get_coordinates()
+    users[idx].marker = map_widget.set_marker(users[idx].coordinates[0], users[idx].coordinates[1])
 
     buttton_dodaj_obiekt.configure(text="Dodaj", command=add_user)
     entry_name.delete(0, END)
